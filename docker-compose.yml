@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: prestacontrol-db
+    environment:
+      POSTGRES_DB: prestacontrol
+      POSTGRES_USER: prestacontrol
+      POSTGRES_PASSWORD: prestacontrol123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prestacontrol -d prestacontrol"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: prestacontrol-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/prestacontrol
+      DB_USER: prestacontrol
+      DB_PASSWORD: prestacontrol123
+      JWT_SECRET: ${JWT_SECRET:-santacruz-prestacontrol-clave-secreta-cambiar-en-produccion}
+      JWT_EXP_MS: 86400000
+      PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: prestamoservice
+  datasource:
+    # DB_URL se usa en Render/Docker. Por defecto apunta al PostgreSQL local.
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/prestacontrol}
+    username: ${DB_USER:prestacontrol}
+    password: ${DB_PASSWORD:prestacontrol123}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  # Render inyecta PORT. En local se usa 8080.
+  port: ${PORT:8080}
+
+jwt:
+  # IMPORTANTE: en producción cambiar con variable de entorno (mínimo 32 caracteres).
+  secret: ${JWT_SECRET:santacruz-prestacontrol-clave-secreta-cambiar-en-produccion}
+  expiration-ms: ${JWT_EXP_MS:86400000}
